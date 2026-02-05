@@ -19,7 +19,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- 考试基本信息 -->
       <div class="result-header">
         <div class="header-left">
@@ -141,28 +141,28 @@
       <!-- 操作按钮 -->
       <div class="action-buttons">
         <!-- 返回首页按钮 -->
-        <el-button 
-          type="primary" 
+        <el-button
+          type="primary"
           size="large"
           @click="goHome"
           icon="HomeFilled"
         >
           🏠 返回首页
         </el-button>
-        
+
         <!-- 查看考试列表按钮 -->
-        <el-button 
-          type="info" 
+        <el-button
+          type="info"
           size="large"
           @click="goToExamList"
           icon="List"
         >
           📝 考试列表
         </el-button>
-        
-        <el-button 
-          v-if="examRecord.status === '已批阅'" 
-          type="success" 
+
+        <el-button
+          v-if="examRecord.status === '已批阅'"
+          type="success"
           size="large"
           @click="downloadResult"
           icon="Download"
@@ -189,13 +189,13 @@
               {{ answerRecord.score || 0 }} / {{ getQuestionMaxScore(answerRecord.questionId) }} 分
             </div>
           </div>
-          
+
           <div class="question-content">
             <div class="question-title">
               <span class="question-type">{{ getQuestionTypeByRecord(answerRecord) }}</span>
               {{ getQuestionTitleByRecord(answerRecord) }}
             </div>
-            
+
             <!-- 选择题选项展示 -->
             <div v-if="getQuestionByRecord(answerRecord)?.type === 'CHOICE' && getQuestionByRecord(answerRecord)?.choices" class="question-choices">
               <div class="choices-grid">
@@ -205,7 +205,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="answer-section">
               <div class="user-answer">
                 <strong>💭 你的答案：</strong>
@@ -216,7 +216,7 @@
                 <span class="answer-text correct">{{ getFormattedCorrectAnswer(answerRecord) }}</span>
               </div>
             </div>
-            
+
             <!-- AI评语 - 只有简答题才显示 -->
             <div v-if="answerRecord.aiCorrection && getQuestionByRecord(answerRecord)?.type === 'TEXT'" class="ai-feedback">
               <div class="feedback-header">
@@ -237,13 +237,13 @@
           <h1>🎓 考试成绩单</h1>
           <div class="certificate-decoration"></div>
         </div>
-        
+
         <div class="certificate-body">
           <div class="student-info">
             <h2>{{ examRecord?.studentName || '考生' }}</h2>
             <p>于 {{ formatDateTime(examRecord?.endTime) }} 完成</p>
           </div>
-          
+
           <div class="exam-details">
             <h3>{{ examRecord?.paper?.name }}</h3>
             <div class="score-display-cert" :class="scoreClass">
@@ -251,7 +251,7 @@
               <div class="score-percentage-cert">{{ scorePercentage }}%</div>
             </div>
           </div>
-          
+
           <div class="performance-stats">
             <div class="stat-item">
               <span>题目总数</span>
@@ -266,13 +266,13 @@
               <span>{{ examDuration }}</span>
             </div>
           </div>
-          
+
           <div v-if="examRecord?.answers" class="ai-summary-cert">
             <h4>🤖 AI学习建议</h4>
             <p>{{ examRecord.answers }}</p>
           </div>
         </div>
-        
+
         <div class="certificate-footer">
           <p>智能学习平台 · AI驱动</p>
           <p>{{ new Date().toLocaleDateString() }} 生成</p>
@@ -314,7 +314,7 @@ const scoreClass = computed(() => {
 
 const correctCount = computed(() => {
   if (!examRecord.value?.answerRecords) return 0
-  return examRecord.value.answerRecords.filter(record => record.isCorrect === 1).length
+  return examRecord.value.answerRecords.filter(record => record.isCorrect == 1).length
 })
 
 // 实际答题的题目数量
@@ -393,7 +393,7 @@ const getScoreClass = (questionId) => {
   const score = getQuestionScore(questionId)
   const question = examRecord.value.paper.questions.find(q => q.id === questionId)
   if (!question) return 'zero'
-  
+
   const percentage = (score / question.paperScore) * 100
   if (percentage === 100) return 'full'
   if (percentage >= 60) return 'partial'
@@ -430,9 +430,9 @@ const getQuestionMaxScore = (questionId) => {
 // 格式化判断题答案显示
 const formatJudgeAnswer = (answer) => {
   if (!answer) return '未作答'
-  
+
   const answerStr = answer.toString().toUpperCase()
-  
+
   // 处理各种格式的判断题答案
   switch (answerStr) {
     case 'T':
@@ -453,12 +453,12 @@ const formatJudgeAnswer = (answer) => {
 // 获取格式化的用户答案
 const getFormattedUserAnswer = (answerRecord) => {
   if (!answerRecord.userAnswer) return '未作答'
-  
+
   const question = getQuestionByRecord(answerRecord)
   if (question?.type === 'JUDGE') {
     return formatJudgeAnswer(answerRecord.userAnswer)
   }
-  
+
   return answerRecord.userAnswer
 }
 
@@ -466,11 +466,11 @@ const getFormattedUserAnswer = (answerRecord) => {
 const getFormattedCorrectAnswer = (answerRecord) => {
   const question = getQuestionByRecord(answerRecord)
   if (!question?.answer?.answer) return '答案信息缺失'
-  
+
   if (question.type === 'JUDGE') {
     return formatJudgeAnswer(question.answer.answer)
   }
-  
+
   return question.answer.answer
 }
 
@@ -482,7 +482,7 @@ const getCorrectAnswerByRecord = (answerRecord) => {
 const getScoreClassByRecord = (answerRecord) => {
   const score = answerRecord.score || 0
   const maxScore = getQuestionMaxScore(answerRecord.questionId)
-  
+
   if (score === 0) return 'zero'
   if (score === maxScore) return 'full'
   return 'partial'
@@ -501,20 +501,20 @@ const fetchRankingInfo = async (examRecordId, paperId) => {
   try {
     const response = await fetch(`http://localhost:8080/api/exam-records/ranking?paperId=${paperId}&limit=1000`)
     const result = await response.json()
-    
+
     if (result.code === 200) {
       const rankings = result.data
-      
+
       // 找到当前考试记录的排名
       const sortedRankings = rankings.sort((a, b) => b.score - a.score)
       const currentRankIndex = sortedRankings.findIndex(record => record.id === examRecordId)
-      
+
       if (currentRankIndex !== -1) {
         const currentRank = currentRankIndex + 1
         const totalParticipants = rankings.length
         const beatCount = totalParticipants - currentRank
         const beatPercentage = totalParticipants > 1 ? Math.round((beatCount / (totalParticipants - 1)) * 100) : 0
-        
+
         rankingInfo.value = {
           currentRank,
           totalParticipants,
@@ -530,19 +530,20 @@ const fetchRankingInfo = async (examRecordId, paperId) => {
 
 // 获取考试结果
 const fetchExamResult = async () => {
+  debugger
   loading.value = true
   try {
     const examRecordId = route.params.id || route.query.id
     console.log('获取考试结果，ID:', examRecordId)
-    
+
     if (!examRecordId) {
       throw new Error('缺少考试记录ID')
     }
-    
+
     const res = await getExamRecordById(examRecordId)
     examRecord.value = res.data
     console.log('加载的考试记录:', examRecord.value)
-    
+    debugger
     // 添加详细的调试信息
     console.log('=== 考试结果调试信息 ===')
     console.log('考试总分:', examRecord.value.score)
@@ -550,32 +551,32 @@ const fetchExamResult = async () => {
     console.log('试卷配置题目数:', examRecord.value.paper?.questionCount)
     console.log('实际答题记录数:', examRecord.value.answerRecords?.length)
     console.log('答题记录详情:', examRecord.value.answerRecords)
-    
+
     if (examRecord.value.answerRecords) {
       const correctAnswers = examRecord.value.answerRecords.filter(record => record.isCorrect === 1)
       const wrongAnswers = examRecord.value.answerRecords.filter(record => record.isCorrect === 0)
       const partialAnswers = examRecord.value.answerRecords.filter(record => record.isCorrect === 2)
-      
+
       console.log('完全正确的题目数:', correctAnswers.length)
       console.log('错误的题目数:', wrongAnswers.length)
       console.log('部分正确的题目数:', partialAnswers.length)
-      
+
       // 检查每道题的分数
       examRecord.value.answerRecords.forEach((record, index) => {
         const question = examRecord.value.paper?.questions?.find(q => q.id === record.questionId)
         console.log(`第${index + 1}题 - 题目ID: ${record.questionId}, 得分: ${record.score}, 满分: ${question?.paperScore}, 正确性: ${record.isCorrect}`)
       })
     }
-    
+
     console.log('=== 调试信息结束 ===')
-    
+
     // 为每个题目预处理用户答案
     if (examRecord.value.paper?.questions) {
       examRecord.value.paper.questions.forEach(q => {
         q.userAnswer = getUserAnswer(q.id)
       })
     }
-    
+
     // 获取排名信息
     if (examRecord.value.status === '已批阅') {
       await fetchRankingInfo(examRecord.value.id, examRecord.value.examId)
@@ -592,7 +593,7 @@ const fetchExamResult = async () => {
 const downloadResult = async () => {
   try {
     ElMessage.info('正在生成成绩单，请稍候...')
-    
+
     // 使用html2canvas生成图片
     const canvas = await html2canvas(downloadArea.value, {
       backgroundColor: '#ffffff',
@@ -600,17 +601,17 @@ const downloadResult = async () => {
       useCORS: true,
       allowTaint: true
     })
-    
+
     // 创建下载链接
     const link = document.createElement('a')
     link.download = `考试成绩单_${examRecord.value.studentName}_${new Date().toLocaleDateString()}.png`
     link.href = canvas.toDataURL('image/png')
-    
+
     // 触发下载
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-    
+
     ElMessage.success('成绩单下载成功！')
   } catch (error) {
     console.error('下载失败:', error)
@@ -709,7 +710,7 @@ const getProgressTip = () => {
   const rank = rankingInfo.value.currentRank
   const total = rankingInfo.value.totalParticipants
   const percentage = ((total - rank) / total) * 100
-  
+
   if (rank === 1) return '你已经是第一名了！'
   if (rank <= 3) return '冲击第一名！'
   if (rank <= 10) return '努力进入前三名！'
@@ -743,7 +744,7 @@ const getMotivationMessage = () => {
   const score = examRecord.value?.score || 0
   const totalScore = examRecord.value?.paper?.totalScore || 100
   const percentage = Math.round((score / totalScore) * 100)
-  
+
   if (rank === 1 && percentage >= 90) return '完美表现！你是真正的学霸！'
   if (rank === 1) return '恭喜夺冠！继续保持领先优势！'
   if (rank === 2) return '距离第一名只有一步之遥！'
@@ -815,14 +816,14 @@ const goToExamList = () => {
 const preventBackToExam = () => {
   // 在历史记录中添加一个虚拟状态，防止直接返回到考试页面
   const currentUrl = window.location.href
-  
+
   // 添加当前页面到历史记录（这样返回时还是当前页面）
   window.history.pushState({ page: 'exam-result', preventBack: true }, '', currentUrl)
-  
+
   // 监听浏览器的 popstate 事件（返回按钮）
   const handlePopState = (event) => {
     console.log('检测到浏览器返回操作:', event.state)
-    
+
     // 检查是否是我们设置的防返回状态
     if (event.state && event.state.preventBack) {
       // 如果是，再次推入当前状态，阻止返回
@@ -830,21 +831,21 @@ const preventBackToExam = () => {
       ElMessage.warning('考试已完成，请使用页面上的按钮进行导航')
       return
     }
-    
+
     // 如果用户试图返回到其他页面，检查上一页是否可能是考试页面
     const referrer = document.referrer
     console.log('来源页面:', referrer)
-    
+
     if (referrer && (referrer.includes('/exam/') || referrer.includes('exam'))) {
       // 如果来源页面可能是考试页面，阻止返回并跳转到考试列表
       event.preventDefault()
       ElMessage.warning('考试已完成，不能返回到考试页面。正在跳转到考试列表...')
-      
+
       // 延迟跳转，给用户看到提示
       setTimeout(() => {
         router.replace('/exam/list')
       }, 1500)
-      
+
       // 重新推入当前状态
       window.history.pushState({ page: 'exam-result', preventBack: true }, '', currentUrl)
     } else {
@@ -852,7 +853,7 @@ const preventBackToExam = () => {
       console.log('允许返回到安全页面')
     }
   }
-  
+
   // 添加页面卸载前的警告
   const handleBeforeUnload = (event) => {
     // 检查是否试图导航到考试页面
@@ -863,11 +864,11 @@ const preventBackToExam = () => {
       return '考试已完成，确定要离开结果页面吗？'
     }
   }
-  
+
   // 添加事件监听器
   window.addEventListener('popstate', handlePopState)
   window.addEventListener('beforeunload', handleBeforeUnload)
-  
+
   // 返回清理函数
   return () => {
     window.removeEventListener('popstate', handlePopState)
@@ -877,11 +878,11 @@ const preventBackToExam = () => {
 
 onMounted(() => {
   fetchExamResult()
-  
+
   // 使用 replace 替换当前历史记录，防止返回到考试页面
   const currentPath = route.path
   const examId = route.params.id
-  
+
   // 检查当前URL，如果是通过考试页面跳转来的，替换历史记录
   if (currentPath.includes('/exam-result/')) {
     // 使用 replace 模式，移除考试页面的历史记录
@@ -890,10 +891,10 @@ onMounted(() => {
       query: { ...route.query, fromExam: 'true' }
     })
   }
-  
+
   // 设置防止返回的监听器
   const cleanup = preventBackToExam()
-  
+
   // 在组件卸载时清理
   onUnmounted(() => {
     cleanup()
@@ -2190,4 +2191,4 @@ onMounted(() => {
     border-bottom: 1px solid #f0f0f0;
   }
 }
-</style> 
+</style>
