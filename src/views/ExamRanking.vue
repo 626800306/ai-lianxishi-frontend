@@ -18,24 +18,24 @@
     <!-- 筛选条件 - 美化 -->
     <div class="filter-bar">
       <div class="filter-label">🔍 筛选条件：</div>
-      <el-select 
-        v-model="selectedPaperId" 
-        placeholder="📚 选择试卷" 
-        clearable 
+      <el-select
+        v-model="selectedPaperId"
+        placeholder="📚 选择试卷"
+        clearable
         style="width: 300px"
         @change="loadRanking"
         class="custom-select"
       >
-        <el-option 
-          v-for="paper in paperList" 
-          :key="paper.id" 
-          :label="paper.name" 
-          :value="paper.id" 
+        <el-option
+          v-for="paper in paperList"
+          :key="paper.id"
+          :label="paper.name"
+          :value="paper.id"
         />
       </el-select>
-      <el-select 
-        v-model="rankingLimit" 
-        placeholder="📊 显示数量" 
+      <el-select
+        v-model="rankingLimit"
+        placeholder="📊 显示数量"
         style="width: 150px"
         @change="loadRanking"
         class="custom-select"
@@ -45,10 +45,10 @@
         <el-option label="前50名" :value="50" />
         <el-option label="前100名" :value="100" />
       </el-select>
-      <el-button 
-        type="primary" 
-        @click="loadRanking" 
-        :loading="loading" 
+      <el-button
+        type="primary"
+        @click="loadRanking"
+        :loading="loading"
         icon="Refresh"
         class="refresh-btn"
       >
@@ -73,11 +73,11 @@
         <div v-if="loading" class="loading-container">
           <el-skeleton :rows="10" animated />
         </div>
-        
+
         <div v-else-if="rankingList.length > 0" class="ranking-list">
-          <div 
-            v-for="(record, index) in rankingList" 
-            :key="record.id" 
+          <div
+            v-for="(record, index) in rankingList"
+            :key="record.id"
             class="ranking-item"
             :class="{ 'top-three': index < 3 }"
           >
@@ -101,7 +101,7 @@
             </div>
           </div>
         </div>
-        
+
         <div v-else class="empty-state">
           <div class="empty-icon">📭</div>
           <div class="empty-text">暂无排行榜数据</div>
@@ -206,7 +206,7 @@ const statsTitle = computed(() => {
 const getPaperList = async () => {
   try {
     // 调用后端试卷列表API，只传递状态筛选参数
-    const res = await request.get('/api/papers/list', {
+    const res = await request.get('/paper/page', {
       params: {
         status: 'PUBLISHED'  // 只获取已发布的试卷
       }
@@ -222,6 +222,7 @@ const getPaperList = async () => {
 
 // 加载排行榜数据
 const loadRanking = async () => {
+  debugger
   loading.value = true
   try {
     // 修正API调用参数，使用后端支持的paperId和limit参数
@@ -229,21 +230,21 @@ const loadRanking = async () => {
       paperId: selectedPaperId.value,   // 试卷ID筛选参数
       limit: rankingLimit.value        // 显示数量限制参数
     }
-    
+
     const statsParams = {
-      paperId: selectedPaperId.value,   // 试卷ID筛选参数  
+      paperId: selectedPaperId.value,   // 试卷ID筛选参数
       limit: 1000                      // 统计时获取所有记录
     }
-    
+
     // 并行调用两个API：一个用于显示，一个用于统计
-    const [rankingRes, statsRes] = await Promise.all([
-      request.get('/api/exam-records/ranking', { params: displayParams }),
-      request.get('/api/exam-records/ranking', { params: statsParams })
+    const [rankingRes] = await Promise.all([
+      request.get('/examRecords/list', { params: displayParams }),
+      // request.get('/examRecords/ranking', { params: statsParams })
     ])
-    
+    debugger
     // 设置排行榜数据和统计数据
     rankingList.value = rankingRes.data || []
-    allRecords.value = statsRes.data || []
+    // allRecords.value = statsRes.data || []
   } catch (error) {
     console.error('获取排行榜数据失败：', error)
     ElMessage.error('获取排行榜数据失败')
@@ -919,96 +920,96 @@ html, body {
   .exam-ranking-page {
     padding: 15px;
   }
-  
+
   .main-title {
     font-size: 28px;
   }
-  
+
   .subtitle {
     font-size: 16px;
   }
-  
+
   .filter-bar {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
-  
+
   .main-content {
     flex-direction: column;
     gap: 20px;
   }
-  
+
   .ranking-container {
     flex: none;
   }
-  
+
   .statistics-sidebar {
     position: static;
     max-width: none;
     min-width: auto;
     margin-top: 20px;
   }
-  
+
   .champion-showcase {
     padding: 20px;
   }
-  
+
   .champion-name {
     font-size: 24px;
   }
-  
+
   .champion-score {
     font-size: 28px;
   }
-  
+
   .stats-vertical {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
-  
+
   .stat-card-vertical {
     padding: 15px;
   }
-  
+
   .stat-value {
     font-size: 20px;
   }
-  
+
   .stat-icon {
     font-size: 24px;
     margin-bottom: 8px;
   }
-  
+
   .ranking-item {
     flex-direction: column;
     text-align: center;
     gap: 15px;
     padding: 15px;
   }
-  
+
   .rank-number {
     margin-right: 0;
     width: 50px;
     height: 50px;
     font-size: 18px;
   }
-  
+
   .score-info {
     margin-left: 0;
   }
-  
+
   .score {
     font-size: 20px;
   }
-  
+
   .floating-emojis {
     gap: 20px;
   }
-  
+
   .emoji {
     font-size: 24px;
   }
 }
-</style> 
+</style>

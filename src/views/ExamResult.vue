@@ -161,7 +161,7 @@
         </el-button>
 
         <el-button
-          v-if="examRecord.status === '已批阅'"
+          v-if="examRecord.status == '已批阅'"
           type="success"
           size="large"
           @click="downloadResult"
@@ -172,7 +172,7 @@
       </div>
 
       <!-- AI考试总评 -->
-      <div v-if="examRecord.status === '已批阅' && examRecord.answers" class="ai-summary">
+      <div v-if="examRecord.status == '已批阅' && examRecord.answers" class="ai-summary">
         <h3>🤖 AI考试总评</h3>
         <div class="summary-content">
           <p>{{ examRecord.answers }}</p>
@@ -180,7 +180,7 @@
       </div>
 
       <!-- 详细答题结果 -->
-      <div v-if="examRecord.status === '已批阅'" class="detailed-results">
+      <div v-if="examRecord.status == '已批阅'" class="detailed-results">
         <h3>📋 答题详情</h3>
         <div v-for="(answerRecord, index) in examRecord.answerRecords" :key="answerRecord.id" class="question-result-card">
           <div class="question-header">
@@ -197,7 +197,7 @@
             </div>
 
             <!-- 选择题选项展示 -->
-            <div v-if="getQuestionByRecord(answerRecord)?.type === 'CHOICE' && getQuestionByRecord(answerRecord)?.choices" class="question-choices">
+            <div v-if="getQuestionByRecord(answerRecord)?.type == 'CHOICE' && getQuestionByRecord(answerRecord)?.choices" class="question-choices">
               <div class="choices-grid">
                 <div v-for="(choice, idx) in getQuestionByRecord(answerRecord).choices" :key="idx" class="choice-item">
                   <div class="choice-label">{{ String.fromCharCode(65 + idx) }}</div>
@@ -326,13 +326,14 @@ const actualQuestionCount = computed(() => {
 // 错题数量
 const wrongCount = computed(() => {
   if (!examRecord.value?.answerRecords) return 0
-  return examRecord.value.answerRecords.filter(record => record.isCorrect === 0).length
+  return examRecord.value.answerRecords.filter(record => record.isCorrect == 0).length
 })
 
 // 部分正确题数
 const partialCount = computed(() => {
   if (!examRecord.value?.answerRecords) return 0
-  return examRecord.value.answerRecords.filter(record => record.isCorrect === 2).length
+  // return examRecord.value.answerRecords.filter(record => record.isCorrect == 2).length
+  return actualQuestionCount.value - correctCount.value - wrongCount.value;
 })
 
 const examDuration = computed(() => {
@@ -409,7 +410,7 @@ const getAIFeedback = (questionId) => {
 // 基于答题记录的辅助函数
 const getQuestionByRecord = (answerRecord) => {
   if (!examRecord.value?.paper?.questions) return null
-  return examRecord.value.paper.questions.find(q => q.id === answerRecord.questionId)
+  return examRecord.value.paper.questions.find(q => q.id == answerRecord.questionId)
 }
 
 const getQuestionTitleByRecord = (answerRecord) => {
@@ -423,8 +424,8 @@ const getQuestionTypeByRecord = (answerRecord) => {
 }
 
 const getQuestionMaxScore = (questionId) => {
-  const question = examRecord.value?.paper?.questions?.find(q => q.id === questionId)
-  return question?.paperScore || 10
+  const question = examRecord.value?.paper?.questions?.find(q => q.id == questionId)
+  return question?.score || 10
 }
 
 // 格式化判断题答案显示
@@ -455,7 +456,7 @@ const getFormattedUserAnswer = (answerRecord) => {
   if (!answerRecord.userAnswer) return '未作答'
 
   const question = getQuestionByRecord(answerRecord)
-  if (question?.type === 'JUDGE') {
+  if (question?.type == 'JUDGE') {
     return formatJudgeAnswer(answerRecord.userAnswer)
   }
 
@@ -467,7 +468,7 @@ const getFormattedCorrectAnswer = (answerRecord) => {
   const question = getQuestionByRecord(answerRecord)
   if (!question?.answer?.answer) return '答案信息缺失'
 
-  if (question.type === 'JUDGE') {
+  if (question.type == 'JUDGE') {
     return formatJudgeAnswer(question.answer.answer)
   }
 
@@ -483,8 +484,8 @@ const getScoreClassByRecord = (answerRecord) => {
   const score = answerRecord.score || 0
   const maxScore = getQuestionMaxScore(answerRecord.questionId)
 
-  if (score === 0) return 'zero'
-  if (score === maxScore) return 'full'
+  if (score == 0) return 'zero'
+  if (score == maxScore) return 'full'
   return 'partial'
 }
 
@@ -530,7 +531,6 @@ const fetchRankingInfo = async (examRecordId, paperId) => {
 
 // 获取考试结果
 const fetchExamResult = async () => {
-  debugger
   loading.value = true
   try {
     const examRecordId = route.params.id || route.query.id
@@ -543,7 +543,6 @@ const fetchExamResult = async () => {
     const res = await getExamRecordById(examRecordId)
     examRecord.value = res.data
     console.log('加载的考试记录:', examRecord.value)
-    debugger
     // 添加详细的调试信息
     console.log('=== 考试结果调试信息 ===')
     console.log('考试总分:', examRecord.value.score)
@@ -731,7 +730,7 @@ const getMotivationClass = () => {
 const getMotivationIcon = () => {
   if (!rankingInfo.value) return '💪'
   const rank = rankingInfo.value.currentRank
-  if (rank === 1) return '🎉'
+  if (rank == 1) return '🎉'
   if (rank <= 3) return '🔥'
   if (rank <= 10) return '⚡'
   return '💪'
@@ -745,10 +744,10 @@ const getMotivationMessage = () => {
   const totalScore = examRecord.value?.paper?.totalScore || 100
   const percentage = Math.round((score / totalScore) * 100)
 
-  if (rank === 1 && percentage >= 90) return '完美表现！你是真正的学霸！'
-  if (rank === 1) return '恭喜夺冠！继续保持领先优势！'
-  if (rank === 2) return '距离第一名只有一步之遥！'
-  if (rank === 3) return '勇夺季军！向更高目标冲刺！'
+  if (rank == 1 && percentage >= 90) return '完美表现！你是真正的学霸！'
+  if (rank == 1) return '恭喜夺冠！继续保持领先优势！'
+  if (rank == 2) return '距离第一名只有一步之遥！'
+  if (rank == 3) return '勇夺季军！向更高目标冲刺！'
   if (rank <= 10) return '进入前十强，实力不容小觑！'
   if (percentage >= 80) return '分数很高，排名还有提升空间！'
   return '每一次努力都会有收获，继续加油！'
