@@ -980,7 +980,7 @@
 
 
     const downloadTemplate = async () => {
-        window.location.href = "../../static/题目导入模板.xlsx";
+        window.location.href = "../../static/excel/题目导入模板.xlsx";
     }
 
 

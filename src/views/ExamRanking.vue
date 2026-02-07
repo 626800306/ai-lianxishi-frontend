@@ -222,7 +222,6 @@ const getPaperList = async () => {
 
 // 加载排行榜数据
 const loadRanking = async () => {
-  debugger
   loading.value = true
   try {
     // 修正API调用参数，使用后端支持的paperId和limit参数
@@ -241,7 +240,6 @@ const loadRanking = async () => {
       request.get('/examRecords/list', { params: displayParams }),
       // request.get('/examRecords/ranking', { params: statsParams })
     ])
-    debugger
     // 设置排行榜数据和统计数据
     rankingList.value = rankingRes.data || []
     // allRecords.value = statsRes.data || []

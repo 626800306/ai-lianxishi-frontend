@@ -19,9 +19,9 @@
       <div class="hero-section">
         <!-- 轮播图区域 -->
         <div class="carousel-section">
-          <el-carousel 
+          <el-carousel
             v-model="activeBannerIndex"
-            :interval="5000" 
+            :interval="5000"
             height="280px"
             indicator-position="inside"
             arrow="hover"
@@ -41,9 +41,9 @@
             <span class="notice-title">系统公告</span>
           </div>
           <div class="notice-carousel">
-            <el-carousel 
-              direction="vertical" 
-              :interval="3000" 
+            <el-carousel
+              direction="vertical"
+              :interval="3000"
               height="220px"
               :show-arrow="false"
               indicator-position="none"
@@ -75,16 +75,19 @@
       <div class="quick-actions">
         <h2 class="section-title">快捷功能</h2>
         <div class="action-cards">
-          <div class="action-card" @click="goToExam">
+
+          <!--<div class="action-card" @click="goToExam">
             <el-icon class="card-icon exam-icon"><Document /></el-icon>
             <h3>智能考试</h3>
             <p>AI智能出题，自动批阅，精准评估学习效果</p>
-          </div>
-          <div class="action-card" @click="goToPractice">
+          </div>-->
+
+          <!--<div class="action-card" @click="goToPractice">
             <el-icon class="card-icon practice-icon"><Edit /></el-icon>
             <h3>智能刷题</h3>
             <p>AI推荐题目，个性化练习，智能分析弱项</p>
-          </div>
+          </div>-->
+
           <!-- 移除企业真题卡片 -->
           <!--
           <div class="action-card" @click="goToInterviewQuestions">
@@ -111,16 +114,16 @@
             <h3>AI分析</h3>
             <p>智能学习报告，能力雷达图，个性化学习建议</p>
           </div>
-          <div class="action-card" @click="goToVideos">
+          <!--<div class="action-card" @click="goToVideos">
             <el-icon class="card-icon video-icon"><VideoPlay /></el-icon>
             <h3>视频百科</h3>
             <p>技术点讲解视频，分类学习，互动点赞分享</p>
-          </div>
+          </div>-->
         </div>
       </div>
 
       <!-- 热门题目推荐 -->
-      <div class="popular-section">
+      <!--<div class="popular-section">
         <div class="section-header">
           <h2 class="section-title">热门题目</h2>
           <el-button text @click="goToPractice">查看更多 →</el-button>
@@ -143,7 +146,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
 
       <!-- 统计数据展示 -->
       <div class="stats-section">
@@ -215,7 +218,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { 
+import {
   Search, Document, Edit, Trophy, Bell, DataAnalysis, View, Check, User, Files, TrendCharts, VideoPlay, ChatDotRound, Microphone
 } from '@element-plus/icons-vue'
 import request from '../utils/request'
@@ -258,7 +261,35 @@ const activeBannerIndex = ref(0)
 
 // 获取轮播图数据
 const getBannerList = async () => {
-  try {
+
+  bannerList.value = [
+    {
+      id: 1,
+      title: '智能AI生成题目',
+      description: '利用先进AI技术，快速生成高质量考试题目',
+      imageUrl: '../../static/images/ai-generate.jpg',
+      linkUrl: 'https://www.baidu.com',
+      isActive: true
+    },
+    {
+      id: 2,
+      title: '海量题库资源',
+      description: '覆盖多个学科领域，题目类型丰富多样',
+      imageUrl: '../../static/images/question-bank.jpg',
+      linkUrl: 'http://www.atguigu.com',
+      isActive: false
+    },
+    {
+      id: 3,
+      title: '智能学习分析',
+      description: '详细的答题报告，帮助您精准提升',
+      imageUrl: '../../static/images/analysis.jpg',
+      linkUrl: 'http://www.qq.com',
+      isActive: true
+    }
+  ]
+
+  /*try {
     const res = await request.get('/api/banners/active')
     bannerList.value = res.data || []
     console.log('轮播图数据加载完成')
@@ -270,33 +301,59 @@ const getBannerList = async () => {
         id: 1,
         title: '智能AI生成题目',
         description: '利用先进AI技术，快速生成高质量考试题目',
-        imageUrl: '/api/banners/ai-generate.jpg',
-        linkUrl: '/ai-generate',
+        imageUrl: '../../static/images/ai-generate.jpg',
+        linkUrl: 'https://www.baidu.com',
         isActive: true
       },
       {
         id: 2,
         title: '海量题库资源',
         description: '覆盖多个学科领域，题目类型丰富多样',
-        imageUrl: '/api/banners/question-bank.jpg',
-        linkUrl: '/practice',
-        isActive: true
+        imageUrl: '../../static/images/question-bank.jpg',
+        linkUrl: 'http://www.atguigu.com',
+        isActive: false
       },
       {
         id: 3,
         title: '智能学习分析',
         description: '详细的答题报告，帮助您精准提升',
-        imageUrl: '/api/banners/analysis.jpg',
-        linkUrl: '/analysis',
+        imageUrl: '../../static/images/analysis.jpg',
+        linkUrl: 'http://www.qq.com',
         isActive: true
       }
     ]
-  }
+  }*/
 }
 
 // 获取公告数据
 const getNoticeList = async () => {
-  try {
+  noticeList.value = [
+    {
+      id: 1,
+      title: '系统升级公告',
+      content: '为了提供更好的服务体验，系统将于本周末进行升级维护。维护期间可能会出现短暂的服务中断，请大家合理安排考试时间。感谢您的理解与配合！',
+      type: 'SYSTEM',
+      createTime: '2024-06-24 10:00:00',
+      isActive: true
+    },
+    {
+      id: 2,
+      title: '新增AI智能生成功能',
+      content: '我们很高兴地宣布，系统新增了AI智能生成题目功能，可以快速生成高质量的考试题目。该功能支持多种题型和难度级别，让出题更加高效便捷。',
+      type: 'FEATURE',
+      createTime: '2024-06-23 15:30:00',
+      isActive: true
+    },
+    {
+      id: 3,
+      title: '考试注意事项',
+      content: '各位同学在参加在线考试时，请确保网络连接稳定，不要随意切换窗口。考试过程中如遇到技术问题，请及时联系技术支持。祝大家取得好成绩！',
+      type: 'NOTICE',
+      createTime: '2024-06-22 09:00:00',
+      isActive: true
+    }
+  ]
+  /*try {
     const res = await request.get('/api/notices/latest', { params: { limit: 5 } })
     noticeList.value = res.data || []
     console.log('公告数据加载完成')
@@ -329,7 +386,7 @@ const getNoticeList = async () => {
         isActive: true
       }
     ]
-  }
+  }*/
 }
 
 // 获取热门题目
@@ -529,8 +586,8 @@ const handleAdminLogin = async () => {
 onMounted(() => {
   getBannerList()
   getNoticeList()
-  getPopularQuestions()
-  getStats()
+  // getPopularQuestions()
+  // getStats()
 })
 </script>
 
@@ -969,56 +1026,56 @@ onMounted(() => {
   .navbar {
     padding: 0 20px;
   }
-  
+
   .nav-actions {
     gap: 8px;
   }
-  
+
   .nav-actions .el-button span {
     display: none;
   }
-  
+
   .main-container {
     padding: 20px 16px;
   }
-  
+
   .hero-section {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .carousel-section .el-carousel {
     height: 280px !important;  /* 移动端轮播图高度和桌面端保持一致 */
   }
-  
+
   .banner-item {
     height: 100% !important;
   }
-  
+
   .banner-img {
     height: 100% !important;
   }
-  
+
   .banner-title {
     font-size: 1.4rem;  /* 移动端调整标题字体 */
   }
-  
+
   .banner-desc {
     font-size: 0.95rem;  /* 移动端调整描述字体 */
   }
-  
+
   .section-title {
     font-size: 1.5rem;
   }
-  
+
   .action-cards {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
-  
+
   .popular-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1028,7 +1085,7 @@ onMounted(() => {
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .action-card {
     padding: 24px 16px;
   }
@@ -1071,4 +1128,4 @@ onMounted(() => {
   padding: 4px 18px;
   font-size: 1rem;
 }
-</style> 
+</style>
